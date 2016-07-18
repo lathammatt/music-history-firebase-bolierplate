@@ -8,6 +8,18 @@ let $ = require("jquery"),
     currentUser = require("./currentUser");
 
 
+firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
+    console.log("user logged in", user.uid);
+    currentUser = user.uid;
+    // db.getSongs(templates.makeSongList, currentUser);
+    loadSongsToDOM();
+  } else {
+    console.log("user not logged in");
+    // currentUser.setUser(null);
+  }
+});
+
 if (currentUser.getUser()) {
   console.log("user logged");
   db.getSongs(templates.makeSongList);
@@ -16,57 +28,57 @@ if (currentUser.getUser()) {
 }
 
 // // Using the REST API
-// function loadSongsToDOM() {
-//   $(".uiContainer--wrapper").html("");
-//   db.getSongs()
-//   .then(function(songData){
-//     console.log("songData", songData);
-//     templates.makeSongList(songData);
-//   });
-// }
+function loadSongsToDOM() {
+  $(".uiContainer--wrapper").html("");
+  db.getSongs(currentUser)
+  .then(function(songData){
+    console.log("songData", songData);
+    templates.makeSongList(songData);
+  });
+}
 // loadSongsToDOM();
 
 // // Send newSong data to db then reload DOM with updated song data
-// $(document).on("click", ".save_new_btn", function() {
-//   let songObj = buildSongObj();
-//   db.addSong(songObj)
-//   .then(function(songId){
-//     console.log("song saved", songId);
-//     loadSongsToDOM();
+$(document).on("click", ".save_new_btn", function() {
+  let songObj = buildSongObj();
+  db.addSong(songObj)
+  .then(function(songId){
+    console.log("song saved", songId);
+    loadSongsToDOM();
 
-//   });
-// });
+  });
+});
 
 // // Load and populate form for editing a song
-// $(document).on("click", ".edit-btn", function () {
-//   let songId = $(this).data("edit-id");
-//   db.getSong(songId)
-//   .then(function(song){
-//     return templates.songForm(song, songId);
-//   })
-//   .then(function(finishedForm){
-//     $(".uiContainer--wrapper").html(finishedForm);
-//   });
-// });
+$(document).on("click", ".edit-btn", function () {
+  let songId = $(this).data("edit-id");
+  db.getSong(songId)
+  .then(function(song){
+    return templates.songForm(song, songId);
+  })
+  .then(function(finishedForm){
+    $(".uiContainer--wrapper").html(finishedForm);
+  });
+});
 
 // //Save edited song to FB then reload DOM with updated song data
-// $(document).on("click", ".save_edit_btn", function() {
-//   let songObj = buildSongObj(),
-//       songId = $(this).attr("id");
-//   db.editSong(songObj, songId)
-//   .then(function(data){
-//     console.log("edit", data);
-//     loadSongsToDOM();
-//   });
-// });
+$(document).on("click", ".save_edit_btn", function() {
+  let songObj = buildSongObj(),
+      songId = $(this).attr("id");
+  db.editSong(songObj, songId)
+  .then(function(data){
+    console.log("edit", data);
+    loadSongsToDOM();
+  });
+});
 
 // // Remove song then reload the DOM w/out new song
-// $(document).on("click", ".delete-btn", function () {
-//   db.deleteSong($(this).data("delete-id"))
-//     .then(function(){
-//       loadSongsToDOM();
-//     });
-// });
+$(document).on("click", ".delete-btn", function () {
+  db.deleteSong($(this).data("delete-id"))
+    .then(function(){
+      loadSongsToDOM();
+    });
+});
 
 
 // *******************************************************
@@ -79,44 +91,44 @@ if (currentUser.getUser()) {
 // db.getSongs(templates.makeSongList);
 
 // No need to reload the DOM in the ".then"
-$(document).on("click", ".save_new_btn", function() {
-  let songObj = buildSongObj();
-  db.addSong(songObj)
-  .then(function(songData){
-    console.log("song", songData.key);
-  });
-});
+// $(document).on("click", ".save_new_btn", function() {
+//   let songObj = buildSongObj();
+//   db.addSong(songObj)
+//   .then(function(songData){
+//     console.log("song", songData.key);
+//   });
+// });
 
-// // Load and populate form for editing a song
-$(document).on("click", ".edit-btn", function () {
-  let songId = $(this).data("edit-id");
-  db.getSong(songId)
-  .then(function(song){
-    let newSong = song.val();
-      return templates.songForm(newSong, songId);
-    })
-  .then(function(finishedForm){
-    $(".uiContainer--wrapper").html(finishedForm);
-  });
-});
+// // // Load and populate form for editing a song
+// $(document).on("click", ".edit-btn", function () {
+//   let songId = $(this).data("edit-id");
+//   db.getSong(songId)
+//   .then(function(song){
+//     let newSong = song.val();
+//       return templates.songForm(newSong, songId);
+//     })
+//   .then(function(finishedForm){
+//     $(".uiContainer--wrapper").html(finishedForm);
+//   });
+// });
 
 // //Save edited song to FB then reload DOM with updated song data
-$(document).on("click", ".save_edit_btn", function() {
-    let songObj = buildSongObj(),
-      songId = $(this).attr("id");
-    db.editSong(songObj, songId)
-    .then(function(data){
-      console.log("edit", data);
-  });
-});
+// $(document).on("click", ".save_edit_btn", function() {
+//     let songObj = buildSongObj(),
+//       songId = $(this).attr("id");
+//     db.editSong(songObj, songId)
+//     .then(function(data){
+//       console.log("edit", data);
+//   });
+// });
 
 // // Remove song then reload the DOM w/out new song
-$(document).on("click", ".delete-btn", function () {
-  db.deleteSong($(this).data("delete-id"))
-    .then(function(){
-      console.log("delete");
-    });
-});
+// $(document).on("click", ".delete-btn", function () {
+//   db.deleteSong($(this).data("delete-id"))
+//     .then(function(){
+//       console.log("delete");
+//     });
+// });
 
 // User login section. Should ideally be in its own module
 $("#auth-btn").click(function() {
@@ -141,13 +153,12 @@ $("#auth-btn").click(function() {
 // Helper functions for forms stuff. Nothing related to Firebase
 // Build a song obj from form data.
 function buildSongObj() {
-    let userId = currentUser.getUser();
     let songObj = {
     title: $("#form--title").val(),
     artist: $("#form--artist").val(),
     album: $("#form--album").val(),
     year: $("#form--year").val(),
-    uid: userId
+    uid: currentUser
   };
   return songObj;
 }
