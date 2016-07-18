@@ -6,6 +6,7 @@ let $ = require('jquery'),
     firebase = require("./firebaseConfig"),
     fb = require("./fb-getter"),
     fbData = fb();
+    
 
 // ****************************************
 // DB interaction using Firebase REST API

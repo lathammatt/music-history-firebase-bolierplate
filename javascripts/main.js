@@ -1,9 +1,19 @@
 "use strict";
 
-let $ = require('jquery'),
+let $ = require("jquery"),
     db = require("./db-interaction"),
     templates = require("./dom-builder"),
-    login = require("./user");
+    login = require("./user"),
+    firebase = require("firebase/app"),
+    currentUser = require("./currentUser");
+
+
+if (currentUser.getUser()) {
+  console.log("user logged");
+  db.getSongs(templates.makeSongList);
+} else {
+  console.log("not logged in");
+}
 
 // // Using the REST API
 // function loadSongsToDOM() {
@@ -111,7 +121,7 @@ $(document).on("click", ".delete-btn", function () {
 // User login section. Should ideally be in its own module
 $("#auth-btn").click(function() {
   console.log("clicked auth");
-  login()
+  login.logInGoogle()
   .then(function(result){
     var user = result.user;
     console.log("logged", user.uid);
@@ -131,11 +141,13 @@ $("#auth-btn").click(function() {
 // Helper functions for forms stuff. Nothing related to Firebase
 // Build a song obj from form data.
 function buildSongObj() {
+    let userId = currentUser.getUser();
     let songObj = {
     title: $("#form--title").val(),
     artist: $("#form--artist").val(),
     album: $("#form--album").val(),
-    year: $("#form--year").val()
+    year: $("#form--year").val(),
+    uid: userId
   };
   return songObj;
 }
