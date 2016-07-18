@@ -6,103 +6,67 @@ let $ = require('jquery'),
     firebase = require("./firebaseConfig"),
     fb = require("./fb-getter"),
     fbData = fb();
-    
+
 
 // ****************************************
 // DB interaction using Firebase REST API
 // ****************************************
 
-// function getSongs() {
-// 	return new Promise(function(resolve, reject){
-// 		$.ajax({
-// 			url: "https://musichistory-a3c3b.firebaseio.com/songs.json"
-// 		}).done(function(songData){
-// 			resolve(songData);
-// 		});
-// 	});
-// }
-
-// function addSong(songFormObj) {
-// 	return new Promise(function(resolve, reject){
-// 		$.ajax({
-// 			url: "https://musichistory-a3c3b.firebaseio.com/songs.json",
-// 			type: "POST",
-// 			data: JSON.stringify(songFormObj),
-// 			dataType: "json"
-// 		}).done(function(songId){
-// 			resolve(songId);
-// 		});
-// 	});
-// }
-
-// function deleteSong(songId) {
-// 	return new Promise(function(resolve, reject){
-// 		$.ajax({
-// 			url: `https://musichistory-a3c3b.firebaseio.com/songs/${songId}.json`,
-// 			method: "DELETE"
-// 		}).done(function(){
-// 			resolve();
-// 		});
-// 	});
-// }
-
-// function getSong(songId) {
-// 	return new Promise(function(resolve, reject){
-// 		$.ajax({
-// 			url: `https://musichistory-a3c3b.firebaseio.com/songs/${songId}.json`
-// 		}).done(function(songData){
-// 			resolve(songData);
-// 		});
-// 	});
-// }
-
-// function editSong(songFormObj, songId) {
-// 	return new Promise(function(resolve, reject){
-// 		$.ajax({
-// 			url: `https://musichistory-a3c3b.firebaseio.com/songs/${songId}.json`,
-// 			type: "PUT",
-// 			data: JSON.stringify(songFormObj)
-// 		}).done(function(data){
-// 			resolve(data);
-// 		});
-// 	});
-// }
-
-// module.exports = {
-//   getSongs,
-//   addSong,
-//   getSong,
-//   deleteSong,
-//   editSong
-// };
-
-// ****************************************
-// DB interaction using Firebase SDK
-// ****************************************
-
-function getSongs(callback) {
-	firebase.database().ref('songs').on('value', function(songData){
-		console.log("whut");
-		callback(songData.val());
+function getSongs(userId) {
+	return new Promise(function(resolve, reject){
+		$.ajax({
+			url: `https://musichistory-a3c3b.firebaseio.com/songs.json?orderBy="uid"&equalTo="${userId}"`
+		}).done(function(songData){
+			console.log("songData", songData);
+			resolve(songData);
+		});
 	});
 }
 
-function addSong(newSong) {
-	  return firebase.database().ref("songs").push(newSong);
+function addSong(songFormObj) {
+	return new Promise(function(resolve, reject){
+		$.ajax({
+			url: "https://musichistory-a3c3b.firebaseio.com/songs.json",
+			type: "POST",
+			data: JSON.stringify(songFormObj),
+			dataType: "json"
+		}).done(function(songId){
+			resolve(songId);
+		});
+	});
 }
 
 function deleteSong(songId) {
-	return firebase.database().ref(`songs/${songId}`).remove();
-
+	return new Promise(function(resolve, reject){
+		$.ajax({
+			url: `https://musichistory-a3c3b.firebaseio.com/songs/${songId}.json`,
+			method: "DELETE"
+		}).done(function(){
+			resolve();
+		});
+	});
 }
 
 function getSong(songId) {
-	return firebase.database().ref(`songs/${songId}`).once('value');
+	return new Promise(function(resolve, reject){
+		$.ajax({
+			url: `https://musichistory-a3c3b.firebaseio.com/songs/${songId}.json`
+		}).done(function(songData){
+			resolve(songData);
+		});
+	});
 }
 
 function editSong(songFormObj, songId) {
-	return firebase.database().ref(`songs/${songId}`).update(songFormObj);
-
+	return new Promise(function(resolve, reject){
+		$.ajax({
+			url: `https://musichistory-a3c3b.firebaseio.com/songs/${songId}.json`,
+			type: "PUT",
+			data: JSON.stringify(songFormObj)
+		}).done(function(data){
+			resolve(data);
+		});
+	});
 }
 
 module.exports = {
@@ -112,3 +76,40 @@ module.exports = {
   deleteSong,
   editSong
 };
+
+// ****************************************
+// DB interaction using Firebase SDK
+// ****************************************
+
+// function getSongs(callback, userId) {
+// 	let songs = firebase.database().ref("songs");
+// 	songs.orderByChild("uid").equalTo(userId).on('value', function(songData){
+// 		callback(songData.val());
+// 	});
+// }
+
+// function addSong(newSong) {
+// 	  return firebase.database().ref("songs").push(newSong);
+// }
+
+// function deleteSong(songId) {
+// 	return firebase.database().ref(`songs/${songId}`).remove();
+
+// }
+
+// function getSong(songId) {
+// 	return firebase.database().ref(`songs/${songId}`).once('value');
+// }
+
+// function editSong(songFormObj, songId) {
+// 	return firebase.database().ref(`songs/${songId}`).update(songFormObj);
+
+// }
+
+// module.exports = {
+//   getSongs,
+//   addSong,
+//   getSong,
+//   deleteSong,
+//   editSong
+// };
