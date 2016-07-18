@@ -121,7 +121,7 @@ $(document).on("click", ".delete-btn", function () {
 // User login section. Should ideally be in its own module
 $("#auth-btn").click(function() {
   console.log("clicked auth");
-  login.logInGoogle()
+  login()
   .then(function(result){
     var user = result.user;
     console.log("logged", user.uid);
