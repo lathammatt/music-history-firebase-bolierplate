@@ -20,12 +20,12 @@ firebase.auth().onAuthStateChanged(function(user) {
   }
 });
 
-if (currentUser.getUser()) {
-  console.log("user logged");
-  db.getSongs(templates.makeSongList);
-} else {
-  console.log("not logged in");
-}
+// if (currentUser.getUser()) {
+//   console.log("user logged");
+//   db.getSongs(templates.makeSongList);
+// } else {
+//   console.log("not logged in");
+// }
 
 // // Using the REST API
 function loadSongsToDOM() {
